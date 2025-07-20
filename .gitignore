@@ -1,0 +1,31 @@
+# Бинарные файлы
+*.exe
+*.bin
+*.out
+*.o
+*.a
+
+# Временные файлы
+*.swp
+*.swo
+*~
+*.bak
+
+# Системные файлы
+.DS_Store
+
+# Директории сборки
+build/
+dist/
+
+# Пользовательские данные
+*.txt
+*.csv
+*.dat
+!**/data/*.json  # разрешаем только конфиг-файлы в data/
+results/
+
+# Исключаем скомпилированные программы
+approximator/exponential_fit
+smoother/smoother
+solver/brent_solver

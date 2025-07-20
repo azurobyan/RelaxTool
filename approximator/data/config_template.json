@@ -1,0 +1,27 @@
+{
+    "optimization": {
+        "method": "lm",
+        "n_exponents": 3,
+        "max_iter": 1000,
+        "tolerance": 1e-6
+    },
+    "data": {
+        "input_file": "data.txt",
+        "x_column": 0,
+        "y_column": 1
+    },
+    "plot": {
+        "type": "all",
+        "style": "seaborn",
+        "title": "Exponential Fit Analysis",
+        "xlabel": "Time (s)",
+        "ylabel": "Value",
+        "grid": true,
+        "save_path": "results/plot.png",
+        "dpi": 300
+    },
+    "evaluation": {
+        "metrics": ["mse", "mae", "r2"],
+        "report_file": "results/report.txt"
+    }
+}

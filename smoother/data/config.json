@@ -1,0 +1,53 @@
+{
+    "method": "rlowess",
+    "span": 0.3,
+       "edge_weights": {
+        "left": {
+            "enable": true,
+            "window": 10,
+            "weight_factor": 1.25,
+            "span_ratio": 1
+
+        },
+        "right": {
+            "enable": true,
+            "window": 3,
+            "weight_factor": 2.0,
+            "span_ratio": 1.5
+
+        }
+    },
+    "outlier_detection": {
+        "left": {
+            "enable": true,
+            "window": 4,
+            "threshold": 10.0
+        },
+        "right": {
+            "enable": true,
+            "window": 5,
+            "threshold": 3.0
+        }
+    },
+    "input_file": "data.txt",
+    "output_file": "smoothed_data.txt",
+    
+    "plot_settings": {
+        "title": "Data Smoothing Results",
+        "xlabel": "Time, s",
+        "ylabel": "Amplitude, V",
+        "figsize": [12, 6],
+        "grid": true,
+        "legend": true,
+        "show_original": true,
+        "show_smoothed": true,
+        "output_image": "plot.png",
+        "dpi": 300,
+        "style": "seaborn",
+        "colors": {
+            "original": "#1f77b4",
+            "smoothed": "#ff7f0e"
+        },
+        "linewidth": 1.5
+    }
+}

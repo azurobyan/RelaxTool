@@ -1,0 +1,12 @@
+{
+    "output_directory": "saved_data",
+    "figure_size": [12, 6],
+    "xlabel": "TEMPLATE",
+    "ylabel": "TEMPLATE",
+    "grid": true,
+    "colors": ["#1f77b4", "#ff7f0e", "#2ca02c"],
+    "line_styles": ["-", "--", "-."],
+    "marker_styles": ["o", "s", "^"],
+    "output_format": "png",
+    "dpi": 300
+}

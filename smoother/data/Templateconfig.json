@@ -1,0 +1,25 @@
+{
+    "method": "rloess",
+    "span": 0.5,
+    "input_file": "data.txt",
+    "output_file": "smoothed_data.txt",
+    
+    "plot_settings": {
+        "title": "Data Smoothing Results",
+        "xlabel": "Time, s",
+        "ylabel": "Amplitude, V",
+        "figsize": [12, 6],
+        "grid": true,
+        "legend": true,
+        "show_original": true,
+        "show_smoothed": true,
+        "output_image": "plot.png",
+        "dpi": 300,
+        "style": "seaborn",
+        "colors": {
+            "original": "#1f77b4",
+            "smoothed": "#ff7f0e"
+        },
+        "linewidth": 1.5
+    }
+}
