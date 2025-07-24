@@ -1,6 +1,6 @@
 CXX := g++
 EIGEN_INC := $(shell pkg-config --cflags eigen3 2>/dev/null || echo -I/usr/include/eigen3)
-CXXFLAGS := -std=c++11 -O3 -Wall $(EIGEN_INC)
+CXXFLAGS := -std=c++17 -O3 -Wall $(EIGEN_INC)
 
 TARGET := smoother
 INSTALL_DIR := /usr/local/bin
