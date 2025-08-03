@@ -29,19 +29,19 @@
             "threshold": 3.0
         }
     },
-    "input_file": "data.txt",
-    "output_file": "smoothed_data.txt",
+    "input_file": "/var/lib/relaxtool/input/data_smoother.txt",
+    "output_file": "/var/lib/relaxtool/output/data_smoother.txt",
     
     "plot_settings": {
         "title": "Data Smoothing Results",
         "xlabel": "Time, s",
-        "ylabel": "Amplitude, V",
+        "ylabel": "Amplitude",
         "figsize": [12, 6],
         "grid": true,
         "legend": true,
         "show_original": true,
         "show_smoothed": true,
-        "output_image": "plot.png",
+        "output_image": "/var/lib/relaxtool/output/smoother_plot.png",
         "dpi": 300,
         "style": "seaborn",
         "colors": {

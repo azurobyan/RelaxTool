@@ -1,6 +1,9 @@
 #!/bin/bash
-file="/Users/azsurobyan/Documents/GasSensing/CalculateExp/v2/data.txt"
-resultPath="./results/report.txt"
+path_in="/var/lib/relaxtool/input"
+path_out="/var/lib/relaxtool/output"
+scripts_path="/usr/local/share/approximator/scripts/"
+file=$path_in/data_approximator.txt;
+resultPath=$path_out/report_compare.txt;
 CalculateResponse=false;
 
 show_help() {
@@ -24,17 +27,17 @@ parse_arguments() {
 
 parse_arguments "$@"
 if ($CalculateResponse); then 
-    max=$(awk '{a=$2} END {print a}' $file) #(awk -v opt=0 -f MaxMinSearch.awk $file);
-    min=$(awk 'BEGIN {flg=1} flg==1 {print $2; flg=0}' $file) #(awk -v opt=1 -f MaxMinSearch.awk $file);
+    max=$(awk '{a=$2} END {print a}' $file);
+    min=$(awk 'BEGIN {flg=1} flg==1 {print $2; flg=0}' $file);
     echo "max: "$max
     echo "min: "$min
-    awk -v min=$min -v max=$max 'BEGIN {print "RESPONSE:", (max-min)/(min+0.001);}' >> results/report_compare.txt;
+    awk -v min=$min -v max=$max 'BEGIN {print "RESPONSE:", (max-min)/(min+0.001);}' >> $resultPath;
 fi 
-min=$(awk -v opt=0 -f MaxMinSearch.awk $file);
-awk -v m=$min '{print $1,$2-m;}' $file > data_norm.txt
-cat data_norm.txt >  $file;
-max=$(awk -v opt=1 -f MaxMinSearch.awk $file);
-awk -v M=$max '{print $1, $2/M;}' $file > data_norm.txt
-cat data_norm.txt >  $file;
+min=$(awk -v opt=0 -f $scripts_path/MaxMinSearch.awk $file);
+awk -v m=$min '{print $1,$2-m;}' $file > /tmp/data_norm.txt
+cat /tmp/data_norm.txt >  $file;
+max=$(awk -v opt=1 -f $scripts_path/MaxMinSearch.awk $file);
+awk -v M=$max '{print $1, $2/M;}' $file > /tmp/data_norm.txt
+cat /tmp/data_norm.txt >  $file;
 
-rm data_norm.txt;
+rm /tmp/data_norm.txt;

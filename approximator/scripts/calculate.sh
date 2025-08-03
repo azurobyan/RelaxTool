@@ -1,6 +1,11 @@
 #!/bin/bash
-file_path="./tmp/approximator_tmp.txt"
+
+
+path_in="/var/lib/relaxtool/input"
+path_out="/var/lib/relaxtool/output"
+file_path="/tmp/approximator_tmp.txt"
 numOfChannel=$(awk -F ',' 'NR==1  {print NF}' $file_path)
+scripts_path="/usr/local/share/approximator/scripts/"
 
 show_help() {
     echo "Usage: $0 [OPTIONS]"
@@ -32,86 +37,76 @@ parse_arguments() {
 }
 
 parse_arguments "$@"
-if ($debug); then 
-    echo "debug on"
-fi
+if ($debug); then echo "debug on" ; fi
 for ((i=1;i<=$numOfChannel;i++)) do 
         num=$i;
         exp_num=1;
         best_num=$exp_num;
-        awk -v channel=$i 'BEGIN {print "Channel Number:", channel;}' >>  results/report_compare.txt; 
-        if ($smoothMode); then 
-            awk '{print $2}' data.txt > ../smooth/data.txt;
-        cd ../smooth/;
-        ./smoother;
-        
-        python3 plotter.py config.json;
-        cp plot.png ../v2/results/smooth_Resist$i.png
-        awk '{print 0.045*NR,$1}' smoothed_data.txt > ../v2/data.txt ;
-        cd ../v2;
-        #awk '{for(i=2;i<=NF;i+=2){printf $i"   "}}'  data.txt
-    fi 
+        awk -v channel=$i 'BEGIN {print "Channel Number:", channel;}' >>  $path_out/report_compare.txt; 
+
+        if ($smoothMode); then
+		awk '{print $2}' $path_in/data_approximator.txt > $path_in/data_smoother.txt;
+	        smoother;
+	        smoother_plotter config.json;
+	        cp $path_out/smoother_plot.png $path_out/smooth_Resist$i.png
+	        awk '{print 0.045*NR,$1}' $path_out/data_smoother.txt > $path_in/data_approximator.txt ;
+    	fi 
+
         if ($normMode); then 
-        if ($CalculateResponse); then 
-                    awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > data.txt;
-                    ./normalizer.sh -r;
-        else
-                    awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > data.txt;
-                    ./normalizer.sh;
-        fi
-        else 
-            awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > data.txt;
-    fi 
-        if ($smoothMode); then 
-            awk '{print $2}' data.txt > ../smooth/data.txt;
-        cd ../smooth/;
-        ./smoother;
+	        if ($CalculateResponse); then 
+			awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > $path_in/data_approximator.txt;
+	                $scripts_path/normalizer.sh -r;
+	        else
+	                awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > $path_in/data_approximator.txt;
+	                $scripts_path/normalizer.sh;
+	        fi
+	else
+	        awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > $path_in/data_approximator.txt;
+    	fi 
+
+	if ($smoothMode); then 
+		awk '{print $2}' $path_in/data_approximator.txt > $path_in/data_smoother.txt;
+	        smoother;
+	        smoother_plotter config.json;
+	        cp $path_out/smoother_plot.png $path_out/smooth$i.png
+	        awk '{print 0.045*NR,$1}' $path_out/data_smoother.txt > $path_in/data_approximator.txt ;
+	fi 
+
+	if ($debug); then awk 'BEGIN {print "\n\n\nstart "}'; fi
+    
+	$scripts_path/run.sh -n $exp_num; 
+	minR=$(awk '/R/ {print (1-$2^2)^2}' $path_out/report.txt);
+
+	if ($debug); then echo "R is: ${minR}"; awk 'BEGIN {print "end"}'; fi
+
+	exp_num=$(( $exp_num+1 ));
+
+	while (( $exp_num <= 3 )); do
+
+	        if ($debug); then awk 'BEGIN {print "\n\n\nstart "}'; echo $exp_num; fi
+
+		$scripts_path/run.sh -n $exp_num; 
         
-        python3 plotter.py config.json;
-        cp plot.png ../v2/results/smooth$i.png
-        awk '{print 0.045*NR,$1}' smoothed_data.txt > ../v2/data.txt ;
-        cd ../v2;
-    fi 
-    if ($debug); then awk 'BEGIN {print "\n\n\nstart "}'; fi
-        sed  s"/\"n_exponents\": ./\"n_exponents\": $exp_num/g"  config_template.json > config.json;
-        ./run.sh;
-        minR=$(awk '/R/ {print (1-$2^2)^2}' results/report.txt);
-    if ($debug); then echo "R is: ${minR}"; awk 'BEGIN {print "end"}'; fi
-        exp_num=$(( $exp_num+1 ));
-        while (( $exp_num <= 3 )); do
-        if ($debug); then
-            awk 'BEGIN {print "\n\n\nstart "}';
-                    echo $exp_num;
-        fi
-                sed  s"/\"n_exponents\": ./\"n_exponents\": $exp_num/g"  config_template.json > config.json;
-                ./run.sh;
-        
-        if ($debug); then
-            awk '/R/ {print "R is:", (1-$2^2)^2}' results/report.txt;
-            echo $minR
-        fi
-                if [[ $(awk -v MIN=$minR '/R/&&(1-$2^2)^2<MIN {print "true"}' results/report.txt) ]]; then
+	        if ($debug); then awk '/R/ {print "R is:", (1-$2^2)^2}' $path_out/report.txt; echo $minR; fi
+
+                if [[ $(awk -v MIN=$minR '/R/&&(1-$2^2)^2<MIN {print "true"}' $path_out/report.txt) ]]; then
+
                         best_num=$exp_num;
-                        minR=$(awk '/R/ {print (1-$2^2)^2}' results/report.txt); 
-            if ($debug); then
-                echo "best num is: ${best_num}";
-                echo "minR is: ${minR}";
-            fi
+                        minR=$(awk '/R/ {print (1-$2^2)^2}' $path_out/report.txt); 
+
+            		if ($debug); then echo "best num is: ${best_num}"; echo "minR is: ${minR}"; fi
+
                 fi 
                 exp_num=$(( $exp_num+1 ));
-        if ($debug); then
-            awk 'BEGIN {print "end"}';
-        fi
+        	if ($debug); then awk 'BEGIN {print "end"}'; fi
+
         done 
-        sed  s"/\"n_exponents\": ./\"n_exponents\": $best_num/g"  config_template.json > config.json;
-    if ($debug); then
-        awk 'BEGIN {print "\n\n\nstart "}';
-        echo "best num is: ${best_num}";
-    fi  
-        ./run.sh;
-    cat  results/report.txt >> results/report_compare.txt; 
-    cp results/plot.png results/$i.png
-    if ($debug); then
-        awk 'BEGIN {print "end"}';
-    fi
+
+    	if ($debug); then awk 'BEGIN {print "\n\n\nstart "}'; echo "best num is: ${best_num}"; fi  
+
+        $scripts_path/run.sh -n $best_num;
+    	cat $path_out/report.txt >> $path_out/report_compare.txt; 
+    	cp $path_out/plot.png $path_out/$i.png
+
+    	if ($debug); then awk 'BEGIN {print "end"}'; fi
 done

@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -78,5 +79,5 @@ def plot_results(config_path):
 
 if __name__ == "__main__":
     import sys
-    config_file = sys.argv[1] if len(sys.argv) > 1 else "config.json"
+    config_file = sys.argv[1] if len(sys.argv) > 1 else "/etc/smoother/config.json"
     plot_results(config_file)

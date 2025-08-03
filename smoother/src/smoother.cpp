@@ -9,6 +9,7 @@
 #include <numeric>
 #include <Eigen/Dense>
 #include "nlohmann/json.hpp"
+#include <filesystem>
 
 using namespace Eigen;
 using json = nlohmann::json;
