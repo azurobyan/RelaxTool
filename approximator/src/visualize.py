@@ -40,7 +40,7 @@ def merge_configs(file_config, cli_args):
 
 def run_fit(config):
     cmd = [
-        'approximator_fit_exponential.sh',
+        '/usr/local/share/approximator/scripts/fit_exponential.sh',
         '-n', str(config['optimization']['n_exponents']),
         '-m', config['optimization']['method'],
         '-f', config['data']['input_file']
