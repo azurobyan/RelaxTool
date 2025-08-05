@@ -43,7 +43,7 @@
         "show_smoothed": true,
         "output_image": "/var/lib/relaxtool/output/smoother_plot.png",
         "dpi": 300,
-        "style": "seaborn",
+        "style": "classic",
         "colors": {
             "original": "#1f77b4",
             "smoothed": "#ff7f0e"

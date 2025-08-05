@@ -47,7 +47,7 @@ for ((i=1;i<=$numOfChannel;i++)) do
         if ($smoothMode); then
 		awk '{print $2}' $path_in/data_approximator.txt > $path_in/data_smoother.txt;
 	        smoother;
-	        smoother_plotter config.json;
+	        smoother_plotter;
 	        cp $path_out/smoother_plot.png $path_out/smooth_Resist$i.png
 	        awk '{print 0.045*NR,$1}' $path_out/data_smoother.txt > $path_in/data_approximator.txt ;
     	fi 
@@ -67,7 +67,7 @@ for ((i=1;i<=$numOfChannel;i++)) do
 	if ($smoothMode); then 
 		awk '{print $2}' $path_in/data_approximator.txt > $path_in/data_smoother.txt;
 	        smoother;
-	        smoother_plotter config.json;
+	        smoother_plotter;
 	        cp $path_out/smoother_plot.png $path_out/smooth$i.png
 	        awk '{print 0.045*NR,$1}' $path_out/data_smoother.txt > $path_in/data_approximator.txt ;
 	fi 
