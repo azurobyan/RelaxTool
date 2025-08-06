@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import json
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,8 +54,8 @@ def plot_single_dataset(dataset, config, index, output_dir):
     plt.close()
 
 if __name__ == "__main__":
-    config = load_json('config.json')
-    datasets = load_json('plot_data.json')
+    config = load_json('/etc/parser/config.json')
+    datasets = load_json('/var/lib/relaxtool/input/plot_data.json')
     
     # Получаем путь из конфига или используем значение по умолчанию
     output_directory = config.get('output_directory', 'saved_data')

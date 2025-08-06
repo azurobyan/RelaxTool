@@ -1,10 +1,13 @@
 
 #!/bin/bash
-# parse_advanced_config.sh
 
-config_file="config.json"
-input_csv="input.csv"
-output_csv="output.csv"
+configs_path="/etc/parser/";
+config_file=$configs_path/"config_parser.json";
+input_path="/var/lib/relaxtool/input/";
+output_path="/var/lib/relaxtool/output/";
+
+input_csv=$input_path/"input.csv"
+output_csv=$output_path/"output.csv"
 
 # Проверка зависимостей
 command -v jq >/dev/null 2>&1 || { 

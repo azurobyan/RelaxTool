@@ -1,5 +1,6 @@
-maxStr=$(awk -F ';'  '/T_/ {a=NF} END {print a}' output.csv);
-xDataStr=$(awk -F ';' 'BEGIN {i=1} /T_/ {printf i","; i++}' output.csv);
+output_csv="/var/lib/relaxtool/output/$output_csv";
+maxStr=$(awk -F ';'  '/T_/ {a=NF} END {print a}' $output_csv);
+xDataStr=$(awk -F ';' 'BEGIN {i=1} /T_/ {printf i","; i++}' $output_csv);
 echo "[";
 for((num=2; num<=$maxStr;num++)) do
 	awk -v num=$num -F ';' 'BEGIN {
@@ -16,7 +17,7 @@ for((num=2; num<=$maxStr;num++)) do
 	END {
 	    printf "]\n"; 
 	    print "\t\t\t}"; 
-	    printf "\t}"}' output.csv | 
+	    printf "\t}"}' $output_csv | 
 	    sed 's/N\/A/-1/g' | 
 	    sed "s/PLACEHOLDER/$xDataStr/g" | 
 	    sed 's/,]/]/g'
@@ -37,7 +38,7 @@ done
 	END {
 	    printf "]\n"; 
 	    print "\t\t\t}"; 
-	    printf "\t}"}' output.csv | 
+	    printf "\t}"}' $output_csv | 
 	    sed 's/N\/A/-1/g' | 
 	    sed "s/PLACEHOLDER/$xDataStr/g" | 
 	    sed 's/,]/]/g'

@@ -1,5 +1,5 @@
 {
-    "output_directory": "saved_data",
+    "output_directory": "/tmp/saved_data",
     "figure_size": [12, 6],
     "xlabel": "Pulse Number",
     "ylabel": "S",
