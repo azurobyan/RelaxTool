@@ -24,7 +24,7 @@ struct SolverConfig {
     int max_iterations = 100;
 };
 string config_file = "/etc/solver/config_solver.json";
-string input_file = "/home/euser/input_data.txt";
+string input_file = "/var/lib/relaxtool/input/data_solver.txt";
 
 // Функция f(x) = a0 + sum(a[i] * exp(-x / b[i]))
 double f(double x, const Coefficients& coeffs) {

@@ -20,7 +20,7 @@ for (( set=1;set<=1;set++ )) do
 	    $scripts_path/calculate.sh -n -s -r >> /tmp/calculate.log
 	    mkdir $result_path/pulse#$var
 	    mkdir $result_path/pulse#$var/results
-	    cp  $output_path/* $result_path/pulse#$var/results
+	    cp  $output_path/* $result_path/pulse#$var
 	    echo $var"/"$maxnum
 	done
 done

@@ -1,11 +1,10 @@
 #!/bin/bash
+
+echo start
+
 path=$1;
-
-
-
-
-
-scripts_path="/usr/local/share/approximator/scripts/";
+echo $path;
+scripts_path="/usr/local/share/parser/scripts/";
 solver_path="/usr/local/bin/brent_solver";
 configs_path="/etc/parser/";
 config_file=$configs_path/"config_parser.json";
@@ -14,20 +13,22 @@ output_path="/var/lib/relaxtool/output/";
 input_csv="/var/lib/relaxtool/input/input.csv";
 output_csv="/var/lib/relaxtool/output/output.csv";
 
-config_chip=$configs_path/chip$( \
-	jq -r '.chip_number'\ 
-	$config_file | 
-	sed 's/\#/_/g').cfg;
+echo $config_file
+config_chip=$configs_path/chip$(jq -r '.chip_number' $config_file | sed 's/\#/_/g').cfg;
 
-max_Pulse=$( \ 
-	ls $path 
-	| awk -F '#' \
+echo $config_chip
+
+
+max_Pulse=$(  
+	ls $path |
+	       	awk -F '#' \
 		'BEGIN {b=0} 
 		b<$2 {b=$2} 
 		END {print b}');
 
 
 rm /tmp/tempRes.txt;
+echo "1"
 for (( i=1; i<=$max_Pulse; i++ )) do
     echo "Pulse " $i >> /tmp/tempRes.txt;
     input_path=$path/pulse\#$i/report_compare.txt;
@@ -43,7 +44,7 @@ for (( i=1; i<=$max_Pulse; i++ )) do
 			    '  > /tmp/tempTime.csv;
 
 	    awk -v numOfChannel=$numOfChannel \
-		-f $scripts_path/pTitle.awk\ 
+		-f $scripts_path/pTitle.awk \
 		 $config_chip | 
 		 sed '	     s/PARAM/R/g;
 			     s/SCL//g
@@ -59,7 +60,7 @@ for (( i=1; i<=$max_Pulse; i++ )) do
     for (( i1=1; i1<=$numOfChannel; i1++ )) do
 	    awk -v num=$i1 \
 		-f $scripts_path/parser.awk \
-		$input_path > $solver_path/coeff_tmp.txt;
+		$input_path > /var/lib/relaxtool/input/data_solver.txt;
 
         strR=$(awk -v num=$i1 \
 		   -f $scripts_path/parserR.awk 
@@ -73,6 +74,7 @@ for (( i=1; i<=$max_Pulse; i++ )) do
     done
 done
 
+echo "2"
 awk '	/Pulse/ {printf  "\n" $1"#"$2";"} 
 	!/Pulse/ {printf 450*$2";"}' \  
 	/tmp/tempRes.txt >> /tmp/tempTime.csv;
@@ -116,6 +118,7 @@ for ((i=2;i<$StartDataString;i++)) do
 		sed 's/;$//g' >> $input_csv;
 done
 
+echo "3"
 for ((i=$StartDataString;i<=$EndDataString;i++)) do 
     awk -F ';' \
 	    -v NumberString=$i \
@@ -150,7 +153,7 @@ cp -r /tmp/saved_data  $path
 rm /tmp/saved_data/*.png
 
 awk -F ';' \
-	-f CalculateAverPerChannel.awk \
+	-f $scripts_path/CalculateAverPerChannel.awk \
 	$output_csv > $path/Time_avr_report.csv
 
 
