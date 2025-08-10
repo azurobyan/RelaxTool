@@ -45,7 +45,8 @@ for ((i=1;i<=$numOfChannel;i++)) do
         awk -v channel=$i 'BEGIN {print "Channel Number:", channel;}' >>  $path_out/report_compare.txt; 
 
         if ($smoothMode); then
-		awk '{print $2}' $file_path > $path_in/data_smoother.txt;
+		awk -F ',' -v number=$num  '{print 0.045*NR,$number}'  $file_path > $path_in/data_approximator.txt;
+		awk '{print $2}' $path_in/data_approximator.txt > $path_in/data_smoother.txt;
 	        smoother;
 	        smoother_plotter;
 	        cp $path_out/smoother_plot.png $path_out/smooth_Resist$i.png
