@@ -4,8 +4,7 @@
 ```bash
 # Установка зависимостей
 sudo apt update
-sudo apt install -y git build-essential g++ libeigen3-dev
-
+sudo apt install -y git build-essential g++ libeigen3-dev nlohmann-json3-dev
 # Клонирование репозитория
 git clone https://github.com/ваш_username/RelaxTool.git
 cd RelaxTool
