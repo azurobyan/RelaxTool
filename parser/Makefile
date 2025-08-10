@@ -18,6 +18,7 @@ install:
 	# Скрипты
 	sudo install -d $(DESTDIR)$(SHARE_DIR)/scripts
 	sudo install -m 755 $(SCRIPTS) $(DESTDIR)$(SHARE_DIR)/scripts
+	sudo ln -sf $(SHARE_DIR)/scripts/Result_parser.sh $(DESTDIR)$(INSTALL_DIR)/parser_main
 
 uninstall:
 	sudo rm -f $(DESTDIR)$(INSTALL_DIR)/parser_plotter

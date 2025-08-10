@@ -1,25 +1,37 @@
 #!/bin/bash
 
-#/Users/azsurobyan/Downloads/FullLearning/acetone_set"$set"/acetone_set"$set".srs
-file_path=$1
-result_path=$2
-
 output_path="/var/lib/relaxtool/output"
-
 scripts_path="/usr/local/share/approximator/scripts/"
+
+show_help() {
+    echo "Usage: $0 [OPTIONS]"
+    echo
+    echo "Options:"
+    echo "  -i, --input FILE        Input file: *.srs"
+    echo "  -o, --output DIRECTORY  Output directory"
+    echo "  -h, --help              Show this help"
+    exit 0
+}
+
+parse_arguments() {
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            -i|--input) file_path="$2"; shift 2 ;;
+	    -o|--output)  result_path="$2"; shift 2 ;;
+            -h|--help) show_help ;;
+            *) echo "Unknown option: $1"; exit 1 ;;
+        esac
+    done
+}
+
+parse_arguments "$@";
 for (( set=1;set<=1;set++ )) do
-#file_path="../input_data/methanol_set"$set"/methanol_set"$set".srs" 
-#results_path="../output_data"
-#mkdir ./$results_path/$(awk -v str=$file_path 'BEGIN {split(str,arr,"/") ; print arr[3]}')
-#results_path=($results_path/$(awk -v str=$file_path 'BEGIN {split(str,arr,"/") ; print arr[3]}'))
 	maxnum=$(awk -f $scripts_path/calculateNumOfImpuls.awk $file_path);
-    echo $maxnum	
 	for (( var=1;var<=$maxnum;var++ )) do 
 	    rm $output_path/*
 	    sed 's/R /R_/g' $file_path | awk -v pulseNum=$var -f $scripts_path/parser.awk > /tmp/approximator_tmp.txt;
 	    $scripts_path/calculate.sh -n -s -r >> /tmp/calculate.log
 	    mkdir $result_path/pulse#$var
-	    mkdir $result_path/pulse#$var/results
 	    cp  $output_path/* $result_path/pulse#$var
 	    echo $var"/"$maxnum
 	done

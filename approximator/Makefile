@@ -35,7 +35,13 @@ install:
 	sudo install -d $(DESTDIR)$(SHARE_DIR)/scripts
 	sudo install -m 755 $(SCRIPTS) $(DESTDIR)$(SHARE_DIR)/scripts
 	sudo install -d $(DESTDIR)$(DOC_DIR)
-	sudo install -m 644 $(DOCS) $(DESTDIR)$(DOC_DIR)
+	#sudo install -m 644 $(DOCS) $(DESTDIR)$(DOC_DIR)
+	# Создаем симлинки для основных скриптов
+	sudo ln -sf $(SHARE_DIR)/scripts/calculate.sh $(DESTDIR)$(INSTALL_DIR)/approximator_calculate
+	sudo ln -sf $(SHARE_DIR)/scripts/run.sh $(DESTDIR)$(INSTALL_DIR)/approximator_run
+	sudo ln -sf $(SHARE_DIR)/scripts/normalizer.sh $(DESTDIR)$(INSTALL_DIR)/approximator_normalize
+	sudo ln -sf $(SHARE_DIR)/scripts/fit_exponential.sh $(DESTDIR)$(INSTALL_DIR)/approximator_fit
+	sudo ln -sf $(SHARE_DIR)/scripts/parser_input.sh $(DESTDIR)$(INSTALL_DIR)/approximator_parser
 
 uninstall:
 	sudo rm -f $(DESTDIR)$(INSTALL_DIR)/$(TARGET)

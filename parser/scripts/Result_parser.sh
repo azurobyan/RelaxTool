@@ -8,7 +8,7 @@ scripts_path="/usr/local/share/parser/scripts/";
 solver_path="/usr/local/bin/brent_solver";
 configs_path="/etc/parser/";
 config_file=$configs_path/"config_parser.json";
-input_path="/var/lib/relaxtool/input/";
+input_parser_path="/var/lib/relaxtool/input/";
 output_path="/var/lib/relaxtool/output/";
 input_csv="/var/lib/relaxtool/input/input.csv";
 output_csv="/var/lib/relaxtool/output/output.csv";
@@ -60,24 +60,23 @@ for (( i=1; i<=$max_Pulse; i++ )) do
     for (( i1=1; i1<=$numOfChannel; i1++ )) do
 	    awk -v num=$i1 \
 		-f $scripts_path/parser.awk \
-		$input_path > /var/lib/relaxtool/input/data_solver.txt;
+		$input_path > /var/lib/relaxtool/input/data_solver.txt \
+		2> /dev/null;
 
         strR=$(awk -v num=$i1 \
-		   -f $scripts_path/parserR.awk 
+		   -f $scripts_path/parserR.awk \
 	            $input_path);
         strS=$(awk -v num=$i1 \
-		   -f $scripts_path/parserS.awk 
+		   -f $scripts_path/parserS.awk \
 	            $input_path);
-        strRoot=$(brent_solver); 
-
+        strRoot=$(brent_solver 2> /dev/null); 
         echo -e  $strRoot"\t"$strR"\t"$strS >> /tmp/tempRes.txt ;
     done
 done
 
 echo "2"
 awk '	/Pulse/ {printf  "\n" $1"#"$2";"} 
-	!/Pulse/ {printf 450*$2";"}' \  
-	/tmp/tempRes.txt >> /tmp/tempTime.csv;
+	!/Pulse/ {printf 450*$2";"}' /tmp/tempRes.txt >> /tmp/tempTime.csv;
 
 sed 's/;$//g' /tmp/tempTime.csv > $input_csv;
 $scripts_path/parse_advanced_config.sh;
@@ -137,7 +136,7 @@ awk -F ';' \
 	$output_csv | 
 	sed 's/N\/A/-1/g' | 
 	sed 's/,]/]/g' |  
-	sed 's/Pulse/Pulse_Time/g' > $input_path/plot_data.json 
+	sed 's/Pulse/Pulse_Time/g' > $input_parser_path/plot_data.json 
 
 parser_plotter  $configs_path/config.json
 
@@ -146,7 +145,7 @@ rm /tmp/saved_data/*.png
 cp $output_csv $path/Time_avr_report.csv
 
 $scripts_path/parceForPulse.sh  | 
-	sed 's/channel/Time_Channel/g' > $input_path/plot_data.json 
+	sed 's/channel/Time_Channel/g' > $input_parser_path/plot_data.json 
 
 parser_plotter  $configs_path/config.json
 cp -r /tmp/saved_data  $path
@@ -202,7 +201,7 @@ awk -F ';' \
 	-f $scripts_path/parser_plot.awk \
 	$output_csv | 
 	sed 's/N\/A/-1/g' | 
-	sed 's/,]/]/g' > $input_path/plot_data.json 
+	sed 's/,]/]/g' > $input_parser_path/plot_data.json 
 
 parser_plotter  $configs_path/config.json
 cp -r /tmp/saved_data  $path
@@ -210,7 +209,7 @@ rm /tmp/saved_data/*.png
 cp $output_csv $path/S_avr_report.csv
 
 $scripts_path/parceForPulse.sh | 
-	sed 's/channel/S_Channel/g' > $input_path/plot_data.json 
+	sed 's/channel/S_Channel/g' > $input_parser_path/plot_data.json 
 
 parser_plotter $configs_path/config.json
 cp -r /tmp/saved_data  $path
