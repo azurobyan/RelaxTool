@@ -5,6 +5,7 @@ configs_path="/etc/parser/";
 config_file=$configs_path/"config_parser.json";
 input_path="/var/lib/relaxtool/input/";
 output_path="/var/lib/relaxtool/output/";
+scripts_path="/usr/local/share/parser/scripts/";
 
 input_csv=$input_path/"input.csv"
 output_csv=$output_path/"output.csv"
@@ -38,7 +39,7 @@ gawk -v chip="$chip" \
     -v date="$date" \
     -v temp="$temp" \
     -v humidity="$humidity" \
-    -f advanced_script.awk "$input_csv" > "$output_csv"
+    -f $scripts_path/advanced_script.awk "$input_csv" > "$output_csv"
 
 echo "Анализ завершен. Результаты в $output_csv"
 
