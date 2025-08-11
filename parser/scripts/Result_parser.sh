@@ -13,12 +13,7 @@ output_path="/var/lib/relaxtool/output/";
 input_csv="/var/lib/relaxtool/input/input.csv";
 output_csv="/var/lib/relaxtool/output/output.csv";
 
-echo $config_file
 config_chip=$configs_path/chip$(jq -r '.chip_number' $config_file | sed 's/\#/_/g').cfg;
-
-echo $config_chip
-
-
 max_Pulse=$(  
 	ls $path |
 	       	awk -F '#' \
@@ -28,7 +23,6 @@ max_Pulse=$(
 
 
 rm /tmp/tempRes.txt;
-echo "1"
 for (( i=1; i<=$max_Pulse; i++ )) do
     echo "Pulse " $i >> /tmp/tempRes.txt;
     input_path=$path/pulse\#$i/report_compare.txt;
@@ -74,7 +68,6 @@ for (( i=1; i<=$max_Pulse; i++ )) do
     done
 done
 
-echo "2"
 awk '	/Pulse/ {printf  "\n" $1"#"$2";"} 
 	!/Pulse/ {printf 450*$2";"}' /tmp/tempRes.txt >> /tmp/tempTime.csv;
 
@@ -117,7 +110,6 @@ for ((i=2;i<$StartDataString;i++)) do
 		sed 's/;$//g' >> $input_csv;
 done
 
-echo "3"
 for ((i=$StartDataString;i<=$EndDataString;i++)) do 
     awk -F ';' \
 	    -v NumberString=$i \
@@ -157,49 +149,37 @@ awk -F ';' \
 
 
 ###Calculate S
-StartDataString=$(awk -F  ';' \
-	'(/Pulse/||/Purge/)&&/#1;/ {print NR}' \ 
-	/tmp/tempS.csv);
-
-EndDataString=$(awk -F 	';' \ 
-	'(/Pulse/||/Purge/) {a=NR}
-	END {print a}' \
-	/tmp/tempS.csv);
-
+StartDataString=$(awk -F  ';' '(/Pulse/||/Purge/)&&/#1;/ {print NR}'  /tmp/tempS.csv);
+EndDataString=$(awk -F 	';' '(/Pulse/||/Purge/) {a=NR} END {print a}' /tmp/tempS.csv);
 awk -F ';' \
 	-v  NumberString=1  \
-	'NR==NumberString{print $0}'\
-       	/tmp/tempS.csv | 
+	'NR==NumberString{print $0}' /tmp/tempS.csv | 
 	sed 's/;$//g' > $input_csv;
 
 for ((i=2;i<$StartDataString;i++)) do 
 	awk -F ';' \
 		-v  NumberString=$i \
-		'NR==NumberString{print $0}'\ 
-		/tmp/tempS.csv | 
+		'NR==NumberString{print $0}'  /tmp/tempS.csv | 
 		sed 's/;$//g' >> $input_csv;
 done
 
 for ((i=$StartDataString;i<=$EndDataString;i++)) do 
 	awk -F ';' \
 		-v NumberString=$i \
-		'NR==NumberString{print $0}' \
-		/tmp/tempR.csv | 
+		'NR==NumberString{print $0}' /tmp/tempR.csv | 
 		sed 's/Pulse/R_Pulse/g' | 
 		sed 's/;$//g' >> $input_csv;
 			
 	awk -F ';' \
 		-v NumberString=$i \
-		'NR==NumberString{print $0}' \
-		/tmp/tempS.csv | 
+		'NR==NumberString{print $0}' /tmp/tempS.csv  |
 		sed 's/Pulse/T_Pulse/g' | 
 		sed 's/;$//g' >> $input_csv;
 done
 
 $scripts_path/parse_advanced_config.sh;
 awk -F ';' \
-	-f $scripts_path/parser_plot.awk \
-	$output_csv | 
+	-f $scripts_path/parser_plot.awk $output_csv | 
 	sed 's/N\/A/-1/g' | 
 	sed 's/,]/]/g' > $input_parser_path/plot_data.json 
 
