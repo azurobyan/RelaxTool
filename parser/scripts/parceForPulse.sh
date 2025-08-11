@@ -1,4 +1,4 @@
-output_csv="/var/lib/relaxtool/output/$output_csv";
+output_csv="/var/lib/relaxtool/output/output.csv";
 maxStr=$(awk -F ';'  '/T_/ {a=NF} END {print a}' $output_csv);
 xDataStr=$(awk -F ';' 'BEGIN {i=1} /T_/ {printf i","; i++}' $output_csv);
 echo "[";
